@@ -1,0 +1,291 @@
+/**
+ * WP Ultimate Security Scan - admin styles.
+ *
+ * @package WP_Ultimate_Security_Scan
+ */
+
+.wpuss-wrap {
+	max-width: 1100px;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.wpuss-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px;
+	margin: 16px 0;
+	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.04 );
+}
+
+.wpuss-card h2 {
+	margin-top: 0;
+}
+
+/* ── Status row ───────────────────────────────────────────────────────────── */
+.wpuss-status-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.wpuss-status-label {
+	font-weight: 600;
+}
+
+/* ── Progress bar ─────────────────────────────────────────────────────────── */
+/* .wpuss-progress-bar is the gray container; .wpuss-progress-fill is the fill */
+.wpuss-progress-wrap {
+	margin: 12px 0;
+}
+
+.wpuss-progress-bar {
+	position: relative;
+	height: 22px;
+	background: #f0f0f1;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.wpuss-progress-fill {
+	height: 100%;
+	width: 0;
+	background: linear-gradient( 90deg, #2271b1, #00a0d2 );
+	transition: width 300ms ease;
+}
+
+.wpuss-progress-meta {
+	display: flex;
+	justify-content: space-between;
+	font-size: 12px;
+	color: #50575e;
+	margin-top: 4px;
+}
+
+/* ── Controls ─────────────────────────────────────────────────────────────── */
+.wpuss-controls {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 12px 0;
+}
+
+.wpuss-message {
+	font-style: italic;
+	color: #50575e;
+	margin: 8px 0;
+	min-height: 1.2em;
+}
+
+/* ── Summary grid ─────────────────────────────────────────────────────────── */
+/* Used on both the scan page (live) and the report page */
+.wpuss-summary-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 140px, 1fr ) );
+	gap: 12px;
+	margin: 12px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpuss-summary-grid li {
+	padding: 12px;
+	border-radius: 4px;
+	text-align: center;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+}
+
+.wpuss-summary-grid li .count {
+	display: block;
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1;
+	margin-bottom: 4px;
+}
+
+.wpuss-summary-grid li .label {
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: #50575e;
+}
+
+.wpuss-summary-grid li.sev-critical { background: #fde2e2; border-color: #f1a7a7; }
+.wpuss-summary-grid li.sev-high     { background: #ffe8d6; border-color: #f0b27a; }
+.wpuss-summary-grid li.sev-medium   { background: #fff3cd; border-color: #f0d46a; }
+.wpuss-summary-grid li.sev-low      { background: #e2f0fb; border-color: #9ec5e8; }
+.wpuss-summary-grid li.sev-info     { background: #e8f5e9; border-color: #a5d6a7; }
+
+/* ── Report: findings groups ──────────────────────────────────────────────── */
+/* Each group is also a .wpuss-card, so its h2 sits inside 20px of card padding */
+.wpuss-group h2 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border-left: 4px solid #2271b1;
+	background: #f6f7f7;
+	margin: 0 0 12px;
+	font-size: 16px;
+}
+
+.wpuss-group.sev-critical h2 { border-left-color: #b32d2e; background: #fde2e2; }
+.wpuss-group.sev-high h2     { border-left-color: #d63638; background: #ffe8d6; }
+.wpuss-group.sev-medium h2   { border-left-color: #dba617; background: #fff3cd; }
+.wpuss-group.sev-low h2      { border-left-color: #2271b1; background: #e2f0fb; }
+.wpuss-group.sev-info h2     { border-left-color: #00a32a; background: #e8f5e9; }
+
+.wpuss-count {
+	font-size: 13px;
+	font-weight: normal;
+	color: #50575e;
+}
+
+/* ── Report: individual findings ──────────────────────────────────────────── */
+details.wpuss-finding {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left-width: 4px;
+	border-left-color: #2271b1;
+	border-radius: 3px;
+	margin-bottom: 8px;
+	overflow: hidden;
+}
+
+details.wpuss-finding.sev-critical { border-left-color: #b32d2e; }
+details.wpuss-finding.sev-high     { border-left-color: #d63638; }
+details.wpuss-finding.sev-medium   { border-left-color: #dba617; }
+details.wpuss-finding.sev-low      { border-left-color: #2271b1; }
+details.wpuss-finding.sev-info     { border-left-color: #00a32a; }
+
+details.wpuss-finding > summary {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	cursor: pointer;
+	user-select: none;
+	list-style: none;
+}
+
+details.wpuss-finding > summary::-webkit-details-marker {
+	display: none;
+}
+
+details.wpuss-finding > summary::before {
+	content: '\25B6'; /* ▶ */
+	font-size: 10px;
+	color: #50575e;
+	flex-shrink: 0;
+	transition: transform 200ms;
+}
+
+details.wpuss-finding[open] > summary::before {
+	transform: rotate( 90deg );
+}
+
+.wpuss-finding-title {
+	flex: 1;
+	font-weight: 600;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.wpuss-finding-check {
+	font-size: 11px;
+	color: #50575e;
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 2px;
+	flex-shrink: 0;
+	font-family: monospace;
+}
+
+.wpuss-finding-body {
+	padding: 10px 14px 14px;
+	border-top: 1px solid #f0f0f1;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.wpuss-finding-body p {
+	margin: 6px 0;
+}
+
+.wpuss-finding-body p:first-child {
+	margin-top: 0;
+}
+
+.wpuss-finding-body strong {
+	color: #14532d;
+}
+
+/* ── Focus-lock blur banner ────────────────────────────────────────────────── */
+.wpuss-blur-banner {
+	display: none;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 18px;
+	margin: 0 0 16px 0;
+	background: linear-gradient( 90deg, #fff8dc, #fff3cd );
+	border: 1px solid #f0d46a;
+	border-left: 4px solid #dba617;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.06 );
+	animation: wpussSlideIn 280ms ease-out;
+}
+
+.wpuss-blur-banner.is-visible {
+	display: flex;
+}
+
+.wpuss-blur-banner[hidden] {
+	display: none !important;
+}
+
+.wpuss-blur-icon {
+	font-size: 28px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.wpuss-blur-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.wpuss-blur-text strong {
+	font-size: 14px;
+	color: #1d2327;
+}
+
+.wpuss-blur-text span {
+	font-size: 13px;
+	color: #50575e;
+	line-height: 1.5;
+}
+
+@keyframes wpussSlideIn {
+	from { opacity: 0; transform: translateY( -8px ); }
+	to   { opacity: 1; transform: translateY( 0 ); }
+}
+
+/* ── Notice card ──────────────────────────────────────────────────────────── */
+.wpuss-notice-card p {
+	margin: 0;
+	font-size: 13px;
+	color: #50575e;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.wpuss-empty {
+	padding: 40px 20px;
+	text-align: center;
+	color: #50575e;
+	background: #f6f7f7;
+	border-radius: 4px;
+}
