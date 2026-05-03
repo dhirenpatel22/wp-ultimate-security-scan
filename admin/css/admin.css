@@ -8,6 +8,10 @@
 	max-width: 1100px;
 }
 
+.wpuss-hidden {
+	display: none;
+}
+
 /* ── Card ─────────────────────────────────────────────────────────────────── */
 .wpuss-card {
 	background: #fff;
@@ -274,6 +278,11 @@ details.wpuss-finding[open] > summary::before {
 	to   { opacity: 1; transform: translateY( 0 ); }
 }
 
+/* ── Settings page ────────────────────────────────────────────────────────── */
+.wpuss-api-key-set {
+	color: #00a32a;
+}
+
 /* ── Notice card ──────────────────────────────────────────────────────────── */
 .wpuss-notice-card p {
 	margin: 0;
@@ -288,4 +297,158 @@ details.wpuss-finding[open] > summary::before {
 	color: #50575e;
 	background: #f6f7f7;
 	border-radius: 4px;
+}
+
+/* ── Report: severity tabs ───────────────────────────────────────────────── */
+.wpuss-tabs {
+	margin-top: 16px;
+}
+
+.wpuss-tab-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 2px;
+	border-bottom: 1px solid #c3c4c7;
+	padding: 0;
+	margin: 0;
+}
+
+.wpuss-tab-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-bottom: none;
+	border-radius: 4px 4px 0 0;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	color: #50575e;
+	position: relative;
+	bottom: -1px;
+	line-height: 1.4;
+	transition: background 150ms, color 150ms;
+}
+
+.wpuss-tab-btn:hover:not( :disabled ) {
+	background: #fff;
+	color: #1d2327;
+}
+
+.wpuss-tab-btn.is-active {
+	background: #fff;
+	border-color: #c3c4c7;
+	border-bottom: 1px solid #fff;
+	color: #1d2327;
+	font-weight: 600;
+	z-index: 1;
+}
+
+.wpuss-tab-btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+/* Severity-colour accent on the top border of the active tab */
+.wpuss-tab-btn.sev-critical.is-active { border-top: 3px solid #b32d2e; color: #b32d2e; }
+.wpuss-tab-btn.sev-high.is-active     { border-top: 3px solid #c9460e; color: #c9460e; }
+.wpuss-tab-btn.sev-medium.is-active   { border-top: 3px solid #dba617; color: #8a6800; }
+.wpuss-tab-btn.sev-low.is-active      { border-top: 3px solid #2271b1; color: #2271b1; }
+.wpuss-tab-btn.sev-info.is-active     { border-top: 3px solid #00a32a; color: #1e6823; }
+
+.wpuss-tab-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 18px;
+	padding: 0 5px;
+	border-radius: 9px;
+	font-size: 11px;
+	font-weight: 700;
+	background: #dcdcde;
+	color: #1d2327;
+}
+
+.wpuss-tab-btn.sev-critical .wpuss-tab-count { background: #fde2e2; color: #8a1a1a; }
+.wpuss-tab-btn.sev-high .wpuss-tab-count     { background: #ffe8d6; color: #7d3800; }
+.wpuss-tab-btn.sev-medium .wpuss-tab-count   { background: #fff3cd; color: #6b4d00; }
+.wpuss-tab-btn.sev-low .wpuss-tab-count      { background: #e2f0fb; color: #164f81; }
+.wpuss-tab-btn.sev-info .wpuss-tab-count     { background: #e8f5e9; color: #1e6823; }
+.wpuss-tab-btn:disabled .wpuss-tab-count     { background: #e0e0e0; color: #9e9e9e; }
+
+/* Tab content container */
+.wpuss-tab-panels {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	padding: 20px;
+}
+
+.wpuss-tab-panel            { display: none; }
+.wpuss-tab-panel.is-active  { display: block; }
+
+/* ── Report: instance count badge inside finding summary ─────────────────── */
+.wpuss-issue-badge {
+	font-size: 11px;
+	color: #50575e;
+	background: #f0f0f1;
+	padding: 2px 8px;
+	border-radius: 10px;
+	flex-shrink: 0;
+}
+
+/* ── Report: multi-instance target list inside a finding ─────────────────── */
+.wpuss-instances {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.wpuss-instances-label {
+	margin: 0 0 6px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+	color: #50575e;
+}
+
+.wpuss-target-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 280px;
+	overflow-y: auto;
+}
+
+.wpuss-target-list li {
+	padding: 4px 0;
+	border-bottom: 1px solid #f6f7f7;
+	font-size: 12px;
+}
+
+.wpuss-target-list li:last-child { border-bottom: none; }
+
+.wpuss-target-list code {
+	font-size: 12px;
+	word-break: break-all;
+}
+
+/* ── Summary grid: clickable tiles jump to their severity tab ─────────────── */
+.wpuss-summary-grid li.is-clickable {
+	cursor: pointer;
+	transition: transform 100ms, box-shadow 100ms;
+}
+
+.wpuss-summary-grid li.is-clickable:hover,
+.wpuss-summary-grid li.is-clickable:focus {
+	transform: translateY( -2px );
+	box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
 }

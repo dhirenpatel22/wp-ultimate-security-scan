@@ -135,7 +135,6 @@ class WPUSS_Check_Core_Integrity extends WPUSS_Check_Base {
 			$url,
 			array(
 				'timeout' => 15,
-				'headers' => array( 'X-WPUSS-Scan' => '1' ),
 			)
 		);
 
@@ -317,10 +316,20 @@ class WPUSS_Check_Core_Integrity extends WPUSS_Check_Base {
 	 * Walk wp-admin / wp-includes looking for suspicious extra files
 	 * (files NOT present in the WordPress.org checksums list).
 	 *
+	 * Uses a two-queue approach so no files are lost when a batch boundary
+	 * falls in the middle of a directory:
+	 *   - dirs  — directories still to expand (via scandir)
+	 *   - files — individual file paths waiting to be checked this batch
+	 *
+	 * Directories are expanded eagerly into the files queue, so the batch
+	 * limit only applies to file processing.  On resume the files queue
+	 * carries any leftover entries from the last expanded directory.
+	 *
 	 * Cursor:
-	 *   queue     — directories still to walk
-	 *   known     — associative array of known core paths (from checksums)
-	 *   seen      — files examined so far
+	 *   dirs  — directories still to expand
+	 *   files — file paths pending inspection
+	 *   known — associative array of known core paths (from checksums)
+	 *   seen  — cumulative files examined across all batches
 	 *
 	 * @param array $cursor Cursor.
 	 * @return array
@@ -331,75 +340,77 @@ class WPUSS_Check_Core_Integrity extends WPUSS_Check_Base {
 			return array( 'continue' => false, 'cursor' => array() );
 		}
 
-		if ( ! isset( $cursor['queue'] ) ) {
+		if ( ! isset( $cursor['dirs'] ) ) {
 			$cursor = array(
-				'queue' => array(
-					ABSPATH . 'wp-admin',
-					ABSPATH . 'wp-includes',
-				),
+				'dirs'  => array_values( array_filter(
+					array( ABSPATH . 'wp-admin', ABSPATH . 'wp-includes' ),
+					'is_dir'
+				) ),
+				'files' => array(),
 				'known' => $cached['checksums'], // path => md5 map.
 				'seen'  => 0,
 			);
-			// Ensure directories actually exist before queueing.
-			$cursor['queue'] = array_values( array_filter( $cursor['queue'], 'is_dir' ) );
 		}
 
 		$abs_path = wp_normalize_path( ABSPATH );
 		$seen     = 0;
 
-		while ( ! empty( $cursor['queue'] ) && $seen < self::EXTRAS_BATCH ) {
-			$current = array_shift( $cursor['queue'] );
-			$handle  = @opendir( $current ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			if ( false === $handle ) {
+		while ( $seen < self::EXTRAS_BATCH ) {
+			// Drain the file queue before expanding another directory.
+			if ( ! empty( $cursor['files'] ) ) {
+				$full  = array_shift( $cursor['files'] );
+				$entry = basename( $full );
+				$rel   = ltrim( str_replace( $abs_path, '', wp_normalize_path( $full ) ), '/' );
+
+				if ( ! isset( $cursor['known'][ $rel ] ) ) {
+					// Only flag code-executing files — images, translations, etc.
+					// can legitimately appear in core dirs via plugins.
+					if ( preg_match( '/\.(php|phtml|php5|php7|phar|inc)$/i', $entry ) ) {
+						$this->finding(
+							WPUSS_Logger::SEVERITY_HIGH,
+							__( 'Unknown file inside WordPress core directory', 'wp-ultimate-security-scan' ),
+							sprintf(
+								/* translators: %s: relative path */
+								__( 'The file %s is inside a core WordPress directory but is not part of the official WordPress.org checksums for this version. This is frequently how backdoors hide.', 'wp-ultimate-security-scan' ),
+								$rel
+							),
+							__( 'Inspect the file. If it wasn\'t installed by you deliberately, quarantine it and reinstall WordPress core from Dashboard → Updates → Re-install.', 'wp-ultimate-security-scan' ),
+							$rel
+						);
+					}
+				}
+				$seen++;
 				continue;
 			}
 
-			while ( false !== ( $entry = readdir( $handle ) ) ) { // phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
-				if ( '.' === $entry || '..' === $entry ) {
+			// File queue empty — expand the next directory.
+			if ( empty( $cursor['dirs'] ) ) {
+				break;
+			}
+
+			$dir     = array_shift( $cursor['dirs'] );
+			$entries = @scandir( $dir ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			if ( false === $entries ) {
+				continue;
+			}
+
+			foreach ( $entries as $entry_name ) {
+				if ( '.' === $entry_name || '..' === $entry_name ) {
 					continue;
 				}
-
-				$full = $current . DIRECTORY_SEPARATOR . $entry;
-
+				$full = $dir . DIRECTORY_SEPARATOR . $entry_name;
 				if ( is_dir( $full ) ) {
-					$cursor['queue'][] = $full;
-					continue;
-				}
-
-				// Build the same relative path format that the checksums API uses.
-				$rel = ltrim( str_replace( $abs_path, '', wp_normalize_path( $full ) ), '/' );
-
-				if ( isset( $cursor['known'][ $rel ] ) ) {
-					$seen++;
-					continue;
-				}
-
-				// Only care about code-executing files — images, translations, etc.
-				// get dropped into core dirs by plugins occasionally and aren't scary.
-				if ( preg_match( '/\.(php|phtml|php5|php7|phar|inc)$/i', $entry ) ) {
-					$this->finding(
-						WPUSS_Logger::SEVERITY_HIGH,
-						__( 'Unknown file inside WordPress core directory', 'wp-ultimate-security-scan' ),
-						sprintf(
-							/* translators: %s: relative path */
-							__( 'The file %s is inside a core WordPress directory but is not part of the official WordPress.org checksums for this version. This is frequently how backdoors hide.', 'wp-ultimate-security-scan' ),
-							$rel
-						),
-						__( 'Inspect the file. If it wasn\'t installed by you deliberately, quarantine it and reinstall WordPress core from Dashboard → Updates → Re-install.', 'wp-ultimate-security-scan' ),
-						$rel
-					);
-				}
-				$seen++;
-				if ( $seen >= self::EXTRAS_BATCH ) {
-					break;
+					$cursor['dirs'][] = $full;
+				} else {
+					$cursor['files'][] = $full;
 				}
 			}
-			closedir( $handle );
+			// Directory expansion does not count against the batch limit.
 		}
 
 		$cursor['seen'] = (int) $cursor['seen'] + $seen;
 
-		if ( ! empty( $cursor['queue'] ) ) {
+		if ( ! empty( $cursor['dirs'] ) || ! empty( $cursor['files'] ) ) {
 			return array( 'continue' => true, 'cursor' => $cursor );
 		}
 

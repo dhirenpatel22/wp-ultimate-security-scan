@@ -239,7 +239,6 @@ class WPUSS_Check_SSRF extends WPUSS_Check_Base {
 			array(
 				'timeout'   => 5,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
-				'headers'   => array( 'X-WPUSS-Scan' => '1' ),
 			)
 		);
 

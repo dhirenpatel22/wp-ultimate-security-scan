@@ -270,7 +270,6 @@ class WPUSS_Check_Components extends WPUSS_Check_Base {
 				'timeout'     => 5,
 				'redirection' => 0,
 				'sslverify'   => false,
-				'headers'     => array( 'X-WPUSS-Scan' => '1' ),
 			)
 		);
 

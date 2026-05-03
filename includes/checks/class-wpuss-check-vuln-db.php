@@ -186,7 +186,6 @@ class WPUSS_Check_Vuln_DB extends WPUSS_Check_Base {
 					'headers' => array(
 						'Authorization' => 'Token token=' . $api_key,
 						'User-Agent'    => 'wp-ultimate-security-scan/' . WPUSS_VERSION,
-						'X-WPUSS-Scan'  => '1',
 					),
 				)
 			);

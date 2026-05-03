@@ -86,7 +86,7 @@ defined( 'ABSPATH' ) || exit;
 							);
 							?>
 							<?php if ( ! empty( $settings['wpscan_api_key'] ) ) : ?>
-								<br><span style="color:#00a32a;">&#10003; <?php esc_html_e( 'API key is configured.', 'wp-ultimate-security-scan' ); ?></span>
+								<br><span class="wpuss-api-key-set">&#10003; <?php esc_html_e( 'API key is configured.', 'wp-ultimate-security-scan' ); ?></span>
 							<?php else : ?>
 								<br><em><?php esc_html_e( 'Without a key, only the built-in curated CVE list is used.', 'wp-ultimate-security-scan' ); ?></em>
 							<?php endif; ?>

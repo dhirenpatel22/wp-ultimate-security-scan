@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
 
 			<div class="wpuss-progress-wrap">
 				<div class="wpuss-progress-bar">
-					<div class="wpuss-progress-fill" id="wpuss-progress-fill" style="width:0%"></div>
+					<div class="wpuss-progress-fill" id="wpuss-progress-fill"></div>
 				</div>
 				<div class="wpuss-progress-meta">
 					<span id="wpuss-progress-pct">0%</span>
@@ -74,7 +74,7 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		</div>
 
-		<div class="wpuss-card wpuss-summary" id="wpuss-summary" style="display:none">
+		<div class="wpuss-card wpuss-summary wpuss-hidden" id="wpuss-summary">
 			<h2><?php esc_html_e( 'Live findings', 'wp-ultimate-security-scan' ); ?></h2>
 			<ul class="wpuss-summary-grid">
 				<li class="sev-critical"><span class="count" data-sev="critical">0</span><span class="label"><?php esc_html_e( 'Critical', 'wp-ultimate-security-scan' ); ?></span></li>

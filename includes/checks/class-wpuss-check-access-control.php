@@ -99,11 +99,10 @@ class WPUSS_Check_Access_Control extends WPUSS_Check_Base {
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 				'headers'   => array(
 					'Content-Type' => 'application/json',
-					'X-WPUSS-Scan' => '1',
 				),
 				'body'      => wp_json_encode(
 					array(
-						'title'   => 'WPUSS-scan-probe',
+						'title'   => 'Test',
 						'content' => '',
 						'status'  => 'draft',
 					)
@@ -209,7 +208,6 @@ class WPUSS_Check_Access_Control extends WPUSS_Check_Base {
 				'timeout'     => 5,
 				'redirection' => 0,
 				'sslverify'   => apply_filters( 'https_local_ssl_verify', false ),
-				'headers'     => array( 'X-WPUSS-Scan' => '1' ),
 			)
 		);
 
@@ -249,7 +247,6 @@ class WPUSS_Check_Access_Control extends WPUSS_Check_Base {
 				'timeout'     => 5,
 				'redirection' => 3,
 				'sslverify'   => apply_filters( 'https_local_ssl_verify', false ),
-				'headers'     => array( 'X-WPUSS-Scan' => '1' ),
 			)
 		);
 
