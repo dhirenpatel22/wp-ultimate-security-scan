@@ -106,7 +106,7 @@
 		$steps.text( ( data.done_steps || 0 ) + ' of ' + ( data.total_steps || 0 ) + ' checks' );
 
 		if ( data.summary ) {
-			$summary.show();
+			$summary.removeClass( 'wpuss-hidden' );
 			$summary.find( '.count' ).each( function () {
 				var sev = $( this ).data( 'sev' );
 				$( this ).text( data.summary[ sev ] || 0 );
@@ -352,3 +352,53 @@
 		poll();
 	}
 } )( jQuery );
+
+// ── Report page: severity tab switching ───────────────────────────────────
+// Runs on every plugin admin page; bails immediately if the tab nav is absent
+// (i.e. on pages other than the report page).
+( function () {
+	'use strict';
+
+	var nav = document.querySelector( '.wpuss-tab-nav' );
+	if ( ! nav ) {
+		return;
+	}
+
+	function activateTab( tabKey ) {
+		nav.querySelectorAll( '.wpuss-tab-btn' ).forEach( function ( btn ) {
+			var isThis = btn.dataset.tab === tabKey;
+			btn.classList.toggle( 'is-active', isThis );
+			btn.setAttribute( 'aria-selected', isThis ? 'true' : 'false' );
+		} );
+		document.querySelectorAll( '.wpuss-tab-panel' ).forEach( function ( panel ) {
+			panel.classList.toggle( 'is-active', panel.id === 'wpuss-tab-' + tabKey );
+		} );
+	}
+
+	// Tab button clicks.
+	nav.addEventListener( 'click', function ( e ) {
+		var btn = e.target.closest( '.wpuss-tab-btn' );
+		if ( ! btn || btn.disabled ) {
+			return;
+		}
+		activateTab( btn.dataset.tab );
+	} );
+
+	// Summary grid tiles: click jumps to the matching tab and scrolls to it.
+	document.querySelectorAll( '.wpuss-summary-grid li[data-tab]' ).forEach( function ( tile ) {
+		tile.addEventListener( 'click', function () {
+			activateTab( tile.dataset.tab );
+			var tabsEl = document.querySelector( '.wpuss-tabs' );
+			if ( tabsEl ) {
+				tabsEl.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			}
+		} );
+		// Keyboard support for the role="button" tiles.
+		tile.addEventListener( 'keydown', function ( e ) {
+			if ( 'Enter' === e.key || ' ' === e.key ) {
+				e.preventDefault();
+				tile.click();
+			}
+		} );
+	} );
+} )();

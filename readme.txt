@@ -1,5 +1,5 @@
 === WordPress Ultimate Security Scan ===
-Contributors: Dhiren Patel
+Contributors: dhirenpatel
 Tags: security, scanner, malware, hardening, audit
 Requires at least: 5.8
 Tested up to: 6.8
@@ -8,7 +8,7 @@ Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A single-source security scanner for WordPress that audits core, users, filesystem, plugins, themes, code patterns, HTTP headers and database without hogging server CPU.
+CPU-throttled WordPress security scanner: audits core integrity, users, plugins, themes, code patterns, filesystem, database and headers.
 
 == Description ==
 
@@ -38,6 +38,25 @@ Unlike scanners that lock up your server, this plugin is designed to be a polite
 * **SSRF** — `wp_remote_*()` / `file_get_contents()` / `cURL` / `fsockopen()` called with user-controlled URL, open redirects (`wp_redirect()`, `header(Location:)`), oEmbed REST proxy exposure, pingbacks, `allow_url_fopen`.
 * **Vulnerable & outdated components** — MySQL/MariaDB EOL version, WordPress version ranges with critical known CVEs, plugins with a high historical CVE count, HTTP-to-HTTPS redirect check.
 * **Vulnerability database** — queries the WPScan API (optional API key) for up-to-date CVE data on every installed plugin and theme; falls back to a built-in curated list covering 18+ commonly-exploited plugins.
+
+== Third-Party Services ==
+
+This plugin communicates with the following external services **only while a scan is actively running**. No data is sent on regular page loads.
+
+= WordPress.org Core Checksums API =
+
+During the Core Integrity check the plugin fetches the official MD5 checksums for your exact WordPress version and locale from `api.wordpress.org`. The only data sent is your WordPress version number and site locale (e.g. `en_US`). No personal data, usernames, or site URLs are transmitted.
+
+* Service: https://api.wordpress.org/core/checksums/1.0/
+* Privacy policy: https://automattic.com/privacy/
+
+= WPScan Vulnerability Database (optional) =
+
+If you enter a WPScan API key in Settings, the Vulnerability Database check sends the slug and version number of each installed plugin and theme to `wpscan.com` to retrieve known CVE data. This feature is **disabled by default** and requires you to explicitly provide an API key. Free tier: 25 requests/day; results are cached for 24 hours.
+
+* Service: https://wpscan.com/api/v3/
+* Privacy policy: https://wpscan.com/privacy
+* Terms of service: https://wpscan.com/terms-and-conditions
 
 == Installation ==
 

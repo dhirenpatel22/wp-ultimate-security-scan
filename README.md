@@ -94,7 +94,6 @@ You can disable this in **Settings → Pause when tab is hidden** if you prefer 
 - All output escaped (`esc_html`, `esc_attr`, `esc_url`, `wp_kses_post`).
 - Singleton with `__clone` / `__wakeup` guards.
 - Autoloader scoped to the `WPUSS_` prefix.
-- `X-WPUSS-Scan` header on self-probes so the scanner can't loop on its own HTTP check.
 - `uninstall.php` removes the findings table, options, transients, and cron events cleanly.
 
 ## File layout

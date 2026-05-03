@@ -195,25 +195,25 @@ class WPUSS_Check_Code_Patterns extends WPUSS_Check_Base {
 			);
 		}
 
-		// Missing ABSPATH guard on files that look like top-level plugin includes.
-		// Heuristic: PHP file not in wp-admin/wp-includes, doesn't check ABSPATH.
-		if (
-			false !== strpos( $type, 'plugin' ) &&
-			false === stripos( $contents, 'ABSPATH' ) &&
-			false === stripos( $contents, 'WPINC' ) &&
-			preg_match( '/<\?php/', $contents )
-		) {
-			// Only flag files that declare functions/classes (library-ish files).
-			if ( preg_match( '/\b(?:function|class)\s+\w/i', $contents ) ) {
-				$this->finding(
-					WPUSS_Logger::SEVERITY_LOW,
-					__( 'PHP file without direct-access guard', 'wp-ultimate-security-scan' ),
-					__( "This file does not check for ABSPATH. If the webserver serves .php files directly from wp-content, partial execution can leak errors or allow unintended calls.", 'wp-ultimate-security-scan' ),
-					__( "Add at the top: if ( ! defined( 'ABSPATH' ) ) { exit; }", 'wp-ultimate-security-scan' ),
-					$path
-				);
-			}
-		}
+		// Disabled: too many false positives (template partials, CLI entry points,
+		// auto-generated files) are legitimately loaded without an ABSPATH guard.
+		// Kept here for reference only — do not restore without a tighter heuristic.
+		//
+		// if (
+		//     false !== strpos( $type, 'plugin' ) &&
+		//     false === stripos( $contents, 'ABSPATH' ) &&
+		//     false === stripos( $contents, 'WPINC' ) &&
+		//     preg_match( '/<\?php/', $contents ) &&
+		//     preg_match( '/\b(?:function|class)\s+\w/i', $contents )
+		// ) {
+		//     $this->finding(
+		//         WPUSS_Logger::SEVERITY_LOW,
+		//         __( 'PHP file without direct-access guard', 'wp-ultimate-security-scan' ),
+		//         __( "This file does not check for ABSPATH. ...", 'wp-ultimate-security-scan' ),
+		//         __( "Add at the top: if ( ! defined( 'ABSPATH' ) ) { exit; }", 'wp-ultimate-security-scan' ),
+		//         $path
+		//     );
+		// }
 
 		// Heuristic: raw $wpdb->query with string concatenation of superglobals.
 		if ( preg_match( '/\$wpdb\s*->\s*(?:query|get_(?:row|results|var|col))\s*\(\s*["\'][^"\']*\$_(?:GET|POST|REQUEST|COOKIE)/i', $contents ) ) {

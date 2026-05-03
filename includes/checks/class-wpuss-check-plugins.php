@@ -91,7 +91,8 @@ class WPUSS_Check_Plugins extends WPUSS_Check_Base {
 					isset( $info->new_version ) ? $info->new_version : 'latest'
 				),
 				__( 'Review the changelog and apply the update.', 'wp-ultimate-security-scan' ),
-				'plugin:' . $plugin_file
+				'plugin:' . $plugin_file,
+				array( 'plugin_name' => $data['Name'] )
 			);
 		}
 	}
@@ -118,7 +119,8 @@ class WPUSS_Check_Plugins extends WPUSS_Check_Base {
 						$data['Name']
 					),
 					__( 'Delete plugins you do not intend to use.', 'wp-ultimate-security-scan' ),
-					'plugin:' . $file
+					'plugin:' . $file,
+					array( 'plugin_name' => $data['Name'] )
 				);
 			}
 		}
@@ -146,7 +148,8 @@ class WPUSS_Check_Plugins extends WPUSS_Check_Base {
 						$data['Name']
 					),
 					__( 'Confirm the plugin origin. Remove if unknown or nulled.', 'wp-ultimate-security-scan' ),
-					'plugin:' . $file
+					'plugin:' . $file,
+					array( 'plugin_name' => $data['Name'] )
 				);
 			}
 		}
@@ -176,7 +179,8 @@ class WPUSS_Check_Plugins extends WPUSS_Check_Base {
 						gmdate( 'Y-m-d', $mtime )
 					),
 					__( 'Check the plugin directory page. If unmaintained, find a replacement.', 'wp-ultimate-security-scan' ),
-					'plugin:' . $file
+					'plugin:' . $file,
+					array( 'plugin_name' => $data['Name'] )
 				);
 			}
 		}

@@ -19,6 +19,12 @@
 // Abort if accessed directly — standard WPCS direct-access guard.
 defined( 'ABSPATH' ) || exit;
 
+// Bail silently if a second copy of this plugin is loaded (e.g. wp-ultimate-security-scan-main).
+// Checking WPUSS_VERSION is sufficient because it is the first thing we define below.
+if ( defined( 'WPUSS_VERSION' ) ) {
+	return;
+}
+
 // Plugin constants.
 define( 'WPUSS_VERSION', '1.2.0' );
 define( 'WPUSS_PLUGIN_FILE', __FILE__ );
@@ -37,26 +43,28 @@ define( 'WPUSS_SLUG', 'wp-ultimate-security-scan' );
  * @param string $class_name Fully-qualified class name.
  * @return void
  */
-function wpuss_autoload( $class_name ) {
-	if ( strpos( $class_name, 'WPUSS_' ) !== 0 ) {
-		return;
-	}
-
-	$file_name = 'class-' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
-
-	$candidates = array(
-		WPUSS_PLUGIN_DIR . 'includes/checks/' . $file_name,
-		WPUSS_PLUGIN_DIR . 'includes/' . $file_name,
-	);
-
-	foreach ( $candidates as $candidate ) {
-		if ( file_exists( $candidate ) ) {
-			require_once $candidate;
+if ( ! function_exists( 'wpuss_autoload' ) ) {
+	function wpuss_autoload( $class_name ) {
+		if ( strpos( $class_name, 'WPUSS_' ) !== 0 ) {
 			return;
 		}
+
+		$file_name = 'class-' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
+
+		$candidates = array(
+			WPUSS_PLUGIN_DIR . 'includes/checks/' . $file_name,
+			WPUSS_PLUGIN_DIR . 'includes/' . $file_name,
+		);
+
+		foreach ( $candidates as $candidate ) {
+			if ( file_exists( $candidate ) ) {
+				require_once $candidate;
+				return;
+			}
+		}
 	}
+	spl_autoload_register( 'wpuss_autoload' );
 }
-spl_autoload_register( 'wpuss_autoload' );
 
 // Activation, deactivation, uninstall hooks.
 register_activation_hook( __FILE__, array( 'WPUSS_Core', 'on_activate' ) );
